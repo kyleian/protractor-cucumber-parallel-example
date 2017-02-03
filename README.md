@@ -6,15 +6,19 @@ This work is captured in `hooks.js` and `util.js`.
 
 ## Deployment info
 
-The project requires node and npm. The grunt task runner the project uses is installed by npm.
+The project requires node and npm, and grunt-cli. The grunt tasks used in the project should be taken careof in the grunt file/package.json.
 
 Install the dependencies with
 ```shell
+npm install -g protractor
+npm install -g grunt-cli
 npm install
 ```
 
-From main protract directory, run with:
+From main protract directory, run the following: Webdriver-manager will setup your local selenium hub.
 ```shell
+webdriver-manager update
+webdriver-manager start
 grunt protractor
 ```
 
