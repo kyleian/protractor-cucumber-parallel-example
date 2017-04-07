@@ -4,22 +4,20 @@ I mostly whipped this up in order to determine which of my steps/scenarios
 was causing me the most performance issues during my test suite.
 This work is captured in `hooks.js` and `util.js`.
 
+Ive since added some generically used step definitions I found useful when developing test suites.
+
 ## Deployment info
 
 The project requires node and npm, and grunt-cli. The grunt tasks used in the project should be taken careof in the grunt file/package.json.
 
 Install the dependencies with
 ```shell
-npm install -g protractor
-npm install -g grunt-cli
-npm install
+$ ./test/spec-e2e/support/setup.sh
 ```
 
-From main protract directory, run the following: Webdriver-manager will setup your local selenium hub.
+If you run into any Selenium isues, from main project directory, run the following:
 ```shell
-webdriver-manager update
-webdriver-manager start
-grunt protractor
+grunt exec:webdriver-update && grunt exec:webdriver-nohup
 ```
 
 ## Output
