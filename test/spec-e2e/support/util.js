@@ -22,6 +22,60 @@ var latestResponseCode, latestBodyMsg, latestErrorState = {},
 
 var self = module.exports = {
 
+    // REST Request Functions
+
+    makeRequest: function(options, callback){
+
+        //Set URL for endpoint based on environment and REST method
+        var url = process.env.BASE_URL + "api/" + options.endpoint;
+
+        if(options.urlExtension != undefined && (options.method ==='GET' || options.method ==='DELETE')){ url = url + options.urlExtension; }
+
+        console.log(options.method + ' ' + url);
+
+        var requestOptions = {
+            method: options.method || 'GET',
+            url: url,
+            headers: {
+                'User-Agent': 'request'
+            },
+            body : options.method==='GET' || options.method==='DELETE'?undefined:options.body,
+            rejectUnauthorized : false,
+            json : typeof options.json === 'undefined'?true:options.json,
+            gzip : true
+        };
+
+        request(requestOptions, function(err, response, body) {
+            self.handleRequestResponse(err, response, body, options.method, callback);
+        });
+    },
+
+    handleRequestResponse: function(err, response, body, method, callback) {
+
+        if(err){
+            console.log(err); //Implied an error on the request end of things
+            throw new Error('Error occurred: ' + JSON.stringify(err, null, 3));
+        }
+
+        //store the response code and message
+        var bodyData = body ? body.data : null,
+            statusCode = body && body.code ? body.code : response.statusCode,
+            latestMessage = body ? body.message : response.statusMessage;
+
+        self.setLatestResponseCode(statusCode);
+        self.setLatestBodyMsg(latestMessage);
+
+        if(statusCode != 200){
+            console.log("Error during request:" + statusCode + "; ERROR: " + latestMessage);
+            err = { code:statusCode, error:latestMessage };
+            self.setLatestErrorState(err);
+        }
+
+        callback(err, bodyData);
+    },
+
+
+
     // More Generically Used Util functions
     throwErrorToProtractor: function(message, callback){
         //This method is used to serve an error to the protractor level,
